@@ -561,48 +561,48 @@
             const change = state.selectedBill - cartTotal;
             
             return `
-                <div class="h-screen flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 px-4 sm:px-8 py-6 fade-in overflow-y-auto">
+                <div class="h-screen flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 px-4 sm:px-6 py-4 fade-in">
                     <div class="w-full max-w-2xl">
-                        <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 text-center">
-                            <div class="text-6xl sm:text-7xl md:text-8xl mb-4">✅</div>
-                            <h1 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-gray-800 mb-3">¡Pedido Confirmado!</h1>
-                            <p class="text-lg sm:text-xl md:text-2xl text-gray-600 mb-6">Gracias por tu orden, ${state.customerName}</p>
+                        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 text-center">
+                            <div class="text-5xl sm:text-6xl mb-3">✅</div>
+                            <h1 class="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-800 mb-2">¡Pedido Confirmado!</h1>
+                            <p class="text-base sm:text-lg text-gray-600 mb-4">Gracias por tu orden, ${state.customerName}</p>
                             
-                            <div class="bg-blue-50 rounded-2xl p-6 sm:p-8 mb-6 border-4 border-blue-200">
-                                <p class="text-gray-600 text-base sm:text-lg md:text-xl mb-2">Tu número de orden es:</p>
-                                <p class="text-5xl sm:text-6xl md:text-7xl font-display font-bold text-blue-900">#${state.orderNumber}</p>
+                            <div class="bg-blue-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-4 border-3 border-blue-200">
+                                <p class="text-gray-600 text-sm sm:text-base mb-1">Tu número de orden es:</p>
+                                <p class="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-blue-900">#${state.orderNumber}</p>
                             </div>
 
-                            <div class="bg-gray-50 rounded-2xl p-4 sm:p-6 mb-6">
-                                <div class="flex justify-between items-center mb-3">
-                                    <p class="text-base sm:text-lg md:text-xl text-gray-600">Total:</p>
-                                    <p class="text-2xl sm:text-3xl font-bold text-gray-800">L ${cartTotal}</p>
+                            <div class="bg-gray-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-sm sm:text-base text-gray-600">Total:</p>
+                                    <p class="text-xl sm:text-2xl font-bold text-gray-800">L ${cartTotal}</p>
                                 </div>
-                                <div class="flex justify-between items-center mb-3">
-                                    <p class="text-base sm:text-lg md:text-xl text-gray-600">Pagarás con:</p>
-                                    <p class="text-2xl sm:text-3xl font-bold text-blue-600">L ${state.selectedBill}</p>
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-sm sm:text-base text-gray-600">Pagarás con:</p>
+                                    <p class="text-xl sm:text-2xl font-bold text-blue-600">L ${state.selectedBill}</p>
                                 </div>
-                                <div class="border-t-2 border-gray-300 pt-3 mt-3">
+                                <div class="border-t-2 border-gray-300 pt-2 mt-2">
                                     <div class="flex justify-between items-center">
-                                        <p class="text-lg sm:text-xl font-bold text-gray-700">Tu cambio:</p>
-                                        <p class="text-3xl sm:text-4xl font-bold text-green-600">L ${change}</p>
+                                        <p class="text-base sm:text-lg font-bold text-gray-700">Tu cambio:</p>
+                                        <p class="text-2xl sm:text-3xl font-bold text-green-600">L ${change}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-yellow-50 border-4 border-yellow-300 rounded-2xl p-4 sm:p-6 mb-6">
-                                <p class="text-xl sm:text-2xl font-bold text-yellow-800 mb-2">📍 Siguiente paso:</p>
-                                <p class="text-base sm:text-lg md:text-xl text-yellow-700">Pasa a caja a pagar tu orden</p>
+                            <div class="bg-yellow-50 border-3 border-yellow-300 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4">
+                                <p class="text-lg sm:text-xl font-bold text-yellow-800 mb-1">📍 Siguiente paso:</p>
+                                <p class="text-sm sm:text-base text-yellow-700">Pasa a caja a pagar tu orden</p>
                             </div>
 
                             <button 
                                 onclick="resetApp()"
-                                class="btn-secondary text-white px-8 sm:px-12 py-5 sm:py-6 rounded-2xl font-display font-bold text-xl sm:text-2xl w-full sm:w-auto">
+                                class="btn-secondary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-display font-bold text-lg sm:text-xl w-full sm:w-auto">
                                 ← Volver al Inicio
                             </button>
                         </div>
 
-                        <p class="text-white text-base sm:text-lg md:text-xl mt-6 opacity-75 text-center">Gracias por usar Somar Totem 🇭🇳</p>
+                        <p class="text-white text-sm sm:text-base mt-3 sm:mt-4 opacity-75 text-center">Gracias por usar Somar Totem 🇭🇳</p>
                     </div>
                 </div>
             `;
