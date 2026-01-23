@@ -182,7 +182,11 @@
         };
 
         // Inicializar Supabase
-        const supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+        if (typeof supabase === 'undefined') {
+    window.supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+} else {
+    window.supabaseClient = supabase;
+}
 
         // ==================== ESTADO DE LA APLICACIÓN ====================
         let state = {
