@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Somar Pedidos - Ordena fácil y rápido desde tu celular">
+    <meta name="theme-color" content="#1e3a8a">
+    <title>Somar Pedidos | Somar Hub</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React y ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone para JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNvbWFyIFBlZGlkb3MiLAogICJzaG9ydF9uYW1lIjogIlNvbWFyIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxZTNhOGEiLAogICJ0aGVtZV9jb2xvciI6ICIjMWUzYThhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3JlY3Qgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIGZpbGw9JyUyMzFlM2E4YScvJTNFJTNDdGV4dCB4PSc1MCUyNScgeT0nNTAlMjUnIGZvbnQtc2l6ZT0nNTAnIGZpbGw9J3doaXRlJyUzRVMlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .cart-button-bounce {
+            animation: bounce 0.3s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .product-image {
+            transition: transform 0.3s ease;
+        }
+        
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #1e3a8a;
+        }
+        
+        .quantity-button {
+            transition: all 0.2s ease;
+        }
+        
+        .quantity-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Catálogo de productos
+        const PRODUCTOS = [
+            // Comida
+            {
+                id: 1,
+                nombre: 'Baleada Sencilla',
+                precio: 35,
+                categoria: 'Comida',
+                descripcion: 'Tortilla de harina con frijoles, queso y crema',
+                imagen: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop'
+            },
+            {
+                id: 2,
+                nombre: 'Baleada Especial',
+                precio: 55,
+                categoria: 'Comida',
+                descripcion: 'Con huevo, aguacate, carne y chicharrón',
+                imagen: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop'
+            },
+            {
+                id: 3,
+                nombre: 'Tacos al Pastor',
+                precio: 80,
+                categoria: 'Comida',
+                descripcion: 'Orden de 3 tacos con cebolla y cilantro',
+                imagen: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=400&h=300&fit=crop'
+            },
+            {
+                id: 4,
+                nombre: 'Plato Típico',
+                precio: 120,
+                categoria: 'Comida',
+                descripcion: 'Carne asada, tajadas, ensalada y arroz',
+                imagen: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop'
+            },
+            {
+                id: 5,
+                nombre: 'Pastelitos de Carne',
+                precio: 25,
+                categoria: 'Comida',
+                descripcion: 'Pastelitos fritos rellenos de carne',
+                imagen: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop'
+            },
+            {
+                id: 6,
+                nombre: 'Pollo Frito',
+                precio: 95,
+                categoria: 'Comida',
+                descripcion: 'Pollo frito con papas fritas',
+                imagen: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop'
+            },
+            // Bebidas
+            {
+                id: 7,
+                nombre: 'Coca Cola',
+                precio: 20,
+                categoria: 'Bebidas',
+                descripcion: 'Lata 355ml',
+                imagen: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=300&fit=crop'
+            },
+            {
+                id: 8,
+                nombre: 'Agua Embotellada',
+                precio: 15,
+                categoria: 'Bebidas',
+                descripcion: '500ml',
+                imagen: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=300&fit=crop'
+            },
+            {
+                id: 9,
+                nombre: 'Jugo Natural',
+                precio: 30,
+                categoria: 'Bebidas',
+                descripcion: 'Naranja, piña o sandía',
+                imagen: 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&h=300&fit=crop'
+            },
+            {
+                id: 10,
+                nombre: 'Horchata',
+                precio: 25,
+                categoria: 'Bebidas',
+                descripcion: 'Bebida tradicional hondureña',
+                imagen: 'https://images.unsplash.com/photo-1587080266227-677cc2a4e76e?w=400&h=300&fit=crop'
+            },
+            // Extras
+            {
+                id: 11,
+                nombre: 'Papas Fritas',
+                precio: 35,
+                categoria: 'Extras',
+                descripcion: 'Porción grande de papas',
+                imagen: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop'
+            },
+            {
+                id: 12,
+                nombre: 'Ensalada',
+                precio: 30,
+                categoria: 'Extras',
+                descripcion: 'Ensalada fresca mixta',
+                imagen: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop'
+            },
+            {
+                id: 13,
+                nombre: 'Salsa Picante',
+                precio: 10,
+                categoria: 'Extras',
+                descripcion: 'Porción de salsa casera',
+                imagen: 'https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop'
+            },
+            {
+                id: 14,
+                nombre: 'Tajadas de Plátano',
+                precio: 25,
+                categoria: 'Extras',
+                descripcion: 'Plátano verde frito',
+                imagen: 'https://images.unsplash.com/photo-1587132117449-f5e704026d6c?w=400&h=300&fit=crop'
+            }
+        ];
+
+        const CATEGORIAS = ['Todas', 'Comida', 'Bebidas', 'Extras'];
+
+        function App() {
+            const [carrito, setCarrito] = useState([]);
+            const [categoriaActiva, setCategoriaActiva] = useState('Todas');
+            const [mostrarCarrito, setMostrarCarrito] = useState(false);
+            const [mostrarCheckout, setMostrarCheckout] = useState(false);
+            const [datosCliente, setDatosCliente] = useState({
+                nombre: '',
+                metodoPago: 'Efectivo',
+                referencia: '',
+                billeteAPagar: ''
+            });
+
+            // Cargar carrito del localStorage
+            useEffect(() => {
+                const carritoGuardado = localStorage.getItem('somarCarrito');
+                if (carritoGuardado) {
+                    setCarrito(JSON.parse(carritoGuardado));
+                }
+            }, []);
+
+            // Guardar carrito en localStorage
+            useEffect(() => {
+                localStorage.setItem('somarCarrito', JSON.stringify(carrito));
+            }, [carrito]);
+
+            const agregarAlCarrito = (producto) => {
+                const itemExistente = carrito.find(item => item.id === producto.id);
+                
+                if (itemExistente) {
+                    setCarrito(carrito.map(item =>
+                        item.id === producto.id
+                            ? { ...item, cantidad: item.cantidad + 1 }
+                            : item
+                    ));
+                } else {
+                    setCarrito([...carrito, { ...producto, cantidad: 1 }]);
+                }
+            };
+
+            const modificarCantidad = (id, delta) => {
+                setCarrito(carrito.map(item => {
+                    if (item.id === id) {
+                        const nuevaCantidad = item.cantidad + delta;
+                        return nuevaCantidad > 0 ? { ...item, cantidad: nuevaCantidad } : item;
+                    }
+                    return item;
+                }).filter(item => item.cantidad > 0));
+            };
+
+            const eliminarDelCarrito = (id) => {
+                setCarrito(carrito.filter(item => item.id !== id));
+            };
+
+            const calcularTotal = () => {
+                return carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0);
+            };
+
+            const conteoProductos = () => {
+                return carrito.reduce((total, item) => total + item.cantidad, 0);
+            };
+
+            const productosFiltrados = categoriaActiva === 'Todas'
+                ? PRODUCTOS
+                : PRODUCTOS.filter(p => p.categoria === categoriaActiva);
+
+            const generarMensajeWhatsApp = () => {
+                if (!datosCliente.nombre || !datosCliente.referencia) {
+                    alert('Por favor completa todos los campos obligatorios');
+                    return;
+                }
+
+                if (datosCliente.metodoPago === 'Efectivo' && !datosCliente.billeteAPagar) {
+                    alert('Por favor indica con qué billete vas a pagar');
+                    return;
+                }
+
+                let mensaje = `🍽️ *NUEVO PEDIDO - SOMAR PEDIDOS* 🍽️\n\n`;
+                mensaje += `👤 *Cliente:* ${datosCliente.nombre}\n`;
+                mensaje += `💳 *Método de Pago:* ${datosCliente.metodoPago}\n`;
+                mensaje += `📍 *Referencia:* ${datosCliente.referencia}\n\n`;
+                mensaje += `📋 *DETALLE DEL PEDIDO:*\n`;
+                mensaje += `━━━━━━━━━━━━━━━━━━━\n`;
+                
+                carrito.forEach(item => {
+                    mensaje += `• ${item.nombre} x${item.cantidad} - L ${item.precio * item.cantidad}\n`;
+                });
+                
+                mensaje += `━━━━━━━━━━━━━━━━━━━\n`;
+                mensaje += `💰 *TOTAL A PAGAR: L ${calcularTotal()}*\n\n`;
+                
+                if (datosCliente.metodoPago === 'Efectivo') {
+                    mensaje += `💵 *Paga con:* L ${datosCliente.billeteAPagar}\n`;
+                    const cambio = parseInt(datosCliente.billeteAPagar) - calcularTotal();
+                    if (cambio > 0) {
+                        mensaje += `💸 *Cambio:* L ${cambio}\n`;
+                    }
+                }
+                
+                mensaje += `\n✅ Pedido generado desde *Somar Hub*`;
+
+                const numeroWhatsApp = '50400000000'; // CAMBIAR POR TU NÚMERO
+                const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+                
+                // Limpiar carrito y datos
+                setCarrito([]);
+                setDatosCliente({
+                    nombre: '',
+                    metodoPago: 'Efectivo',
+                    referencia: '',
+                    billeteAPagar: ''
+                });
+                setMostrarCheckout(false);
+                
+                window.open(url, '_blank');
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50 pb-24">
+                    {/* Header */}
+                    <header className="bg-gradient-to-r from-blue-900 to-blue-800 text-white sticky top-0 z-40 shadow-lg">
+                        <div className="container mx-auto px-4 py-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h1 className="text-3xl font-bold tracking-tight">SOMAR PEDIDOS</h1>
+                                    <p className="text-blue-200 text-sm mt-1">Parte de Somar Hub 🇭🇳</p>
+                                </div>
+                                <div className="bg-blue-700 px-4 py-2 rounded-full">
+                                    <span className="text-sm font-semibold">Honduras</span>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Categorías */}
+                    <div className="bg-white shadow-sm sticky top-[88px] z-30">
+                        <div className="container mx-auto px-4 py-4 overflow-x-auto">
+                            <div className="flex gap-2 min-w-max">
+                                {CATEGORIAS.map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setCategoriaActiva(cat)}
+                                        className={`px-6 py-2 rounded-full font-medium transition-all whitespace-nowrap ${
+                                            categoriaActiva === cat
+                                                ? 'bg-blue-900 text-white shadow-md'
+                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Productos */}
+                    <div className="container mx-auto px-4 py-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {productosFiltrados.map(producto => (
+                                <div key={producto.id} className="bg-white rounded-xl shadow-md overflow-hidden fade-in hover:shadow-xl transition-shadow">
+                                    <div className="relative h-48 overflow-hidden bg-gray-200">
+                                        <img
+                                            src={producto.imagen}
+                                            alt={producto.nombre}
+                                            className="w-full h-full object-cover product-image"
+                                        />
+                                        <div className="absolute top-2 right-2 bg-blue-900 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                            L {producto.precio}
+                                        </div>
+                                    </div>
+                                    <div className="p-4">
+                                        <h3 className="font-bold text-lg text-gray-800 mb-1">{producto.nombre}</h3>
+                                        <p className="text-gray-600 text-sm mb-3">{producto.descripcion}</p>
+                                        <button
+                                            onClick={() => agregarAlCarrito(producto)}
+                                            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-lg transition-colors shadow-md active:scale-95"
+                                        >
+                                            Agregar al Carrito
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Botón Flotante del Carrito */}
+                    {conteoProductos() > 0 && (
+                        <button
+                            onClick={() => setMostrarCarrito(true)}
+                            className="fixed bottom-6 right-6 bg-blue-900 text-white p-5 rounded-full shadow-2xl cart-button-bounce hover:bg-blue-800 transition-colors z-50"
+                        >
+                            <div className="relative">
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                                    {conteoProductos()}
+                                </span>
+                            </div>
+                        </button>
+                    )}
+
+                    {/* Modal del Carrito */}
+                    {mostrarCarrito && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-4">
+                            <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden fade-in">
+                                <div className="bg-blue-900 text-white p-6 flex justify-between items-center">
+                                    <h2 className="text-2xl font-bold">Tu Carrito</h2>
+                                    <button
+                                        onClick={() => setMostrarCarrito(false)}
+                                        className="text-white hover:bg-blue-800 p-2 rounded-full"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                
+                                <div className="overflow-y-auto max-h-96 p-4">
+                                    {carrito.length === 0 ? (
+                                        <div className="text-center py-12 text-gray-500">
+                                            <p className="text-lg">Tu carrito está vacío</p>
+                                        </div>
+                                    ) : (
+                                        carrito.map(item => (
+                                            <div key={item.id} className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg mb-3">
+                                                <img src={item.imagen} alt={item.nombre} className="w-20 h-20 object-cover rounded-lg" />
+                                                <div className="flex-1">
+                                                    <h3 className="font-semibold text-gray-800">{item.nombre}</h3>
+                                                    <p className="text-blue-900 font-bold">L {item.precio}</p>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => modificarCantidad(item.id, -1)}
+                                                        className="quantity-button bg-gray-300 hover:bg-gray-400 text-gray-800 w-8 h-8 rounded-full font-bold"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="font-bold text-lg w-8 text-center">{item.cantidad}</span>
+                                                    <button
+                                                        onClick={() => modificarCantidad(item.id, 1)}
+                                                        className="quantity-button bg-emerald-500 hover:bg-emerald-600 text-white w-8 h-8 rounded-full font-bold"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                                <button
+                                                    onClick={() => eliminarDelCarrito(item.id)}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                {carrito.length > 0 && (
+                                    <div className="border-t p-6 bg-gray-50">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <span className="text-xl font-bold text-gray-800">Total:</span>
+                                            <span className="text-3xl font-bold text-blue-900">L {calcularTotal()}</span>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                setMostrarCarrito(false);
+                                                setMostrarCheckout(true);
+                                            }}
+                                            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl transition-colors shadow-lg"
+                                        >
+                                            Finalizar Pedido
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal de Checkout */}
+                    {mostrarCheckout && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-4">
+                            <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto fade-in">
+                                <div className="bg-blue-900 text-white p-6 flex justify-between items-center sticky top-0">
+                                    <h2 className="text-2xl font-bold">Datos de Entrega</h2>
+                                    <button
+                                        onClick={() => setMostrarCheckout(false)}
+                                        className="text-white hover:bg-blue-800 p-2 rounded-full"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div className="p-6 space-y-6">
+                                    <div>
+                                        <label className="block text-gray-700 font-semibold mb-2">Nombre Completo *</label>
+                                        <input
+                                            type="text"
+                                            value={datosCliente.nombre}
+                                            onChange={(e) => setDatosCliente({...datosCliente, nombre: e.target.value})}
+                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-900 transition-colors"
+                                            placeholder="Ej: Juan Pérez"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-gray-700 font-semibold mb-2">Método de Pago *</label>
+                                        <select
+                                            value={datosCliente.metodoPago}
+                                            onChange={(e) => setDatosCliente({...datosCliente, metodoPago: e.target.value})}
+                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-900 transition-colors"
+                                        >
+                                            <option value="Efectivo">Efectivo</option>
+                                            <option value="Transferencia">Transferencia Bancaria</option>
+                                            <option value="Tigo Money">Tigo Money</option>
+                                        </select>
+                                    </div>
+
+                                    {datosCliente.metodoPago === 'Efectivo' && (
+                                        <div>
+                                            <label className="block text-gray-700 font-semibold mb-2">¿Con qué billete vas a pagar? *</label>
+                                            <input
+                                                type="number"
+                                                value={datosCliente.billeteAPagar}
+                                                onChange={(e) => setDatosCliente({...datosCliente, billeteAPagar: e.target.value})}
+                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-900 transition-colors"
+                                                placeholder={`Ej: ${Math.ceil(calcularTotal() / 100) * 100}`}
+                                            />
+                                            {datosCliente.billeteAPagar && (
+                                                <p className="text-sm text-gray-600 mt-2">
+                                                    Cambio: L {parseInt(datosCliente.billeteAPagar) - calcularTotal()}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="block text-gray-700 font-semibold mb-2">Punto de Referencia / Dirección *</label>
+                                        <textarea
+                                            value={datosCliente.referencia}
+                                            onChange={(e) => setDatosCliente({...datosCliente, referencia: e.target.value})}
+                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-900 transition-colors"
+                                            rows="3"
+                                            placeholder="Ej: Frente al parque central, casa color verde"
+                                        />
+                                    </div>
+
+                                    <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                                        <h3 className="font-bold text-blue-900 mb-3">Resumen del Pedido</h3>
+                                        {carrito.map(item => (
+                                            <div key={item.id} className="flex justify-between text-sm mb-2">
+                                                <span>{item.nombre} x{item.cantidad}</span>
+                                                <span className="font-semibold">L {item.precio * item.cantidad}</span>
+                                            </div>
+                                        ))}
+                                        <div className="border-t-2 border-blue-300 mt-3 pt-3 flex justify-between text-lg font-bold">
+                                            <span>TOTAL:</span>
+                                            <span className="text-blue-900">L {calcularTotal()}</span>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={generarMensajeWhatsApp}
+                                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2"
+                                    >
+                                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                        </svg>
+                                        Enviar Pedido por WhatsApp
+                                    </button>
+
+                                    <p className="text-xs text-gray-500 text-center">
+                                        Al confirmar, se abrirá WhatsApp con tu pedido listo para enviar
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
