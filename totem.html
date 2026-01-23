@@ -1,6 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="es">
 <head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a8a">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1046/1046784.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -972,5 +975,13 @@
             }
         }, 5 * 60 * 1000);
     </script>
+    // Registrar el Service Worker para habilitar la instalación
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registrado'))
+            .catch(err => console.error('Error al registrar SW', err));
+    });
+}
 </body>
 </html>
