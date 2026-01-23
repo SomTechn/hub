@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="screen-orientation" content="landscape">
@@ -13,6 +13,17 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '475px',
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,12 +36,21 @@
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            height: 100%;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            touch-action: pan-y;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         h1, h2, h3, .font-display {
@@ -158,6 +178,49 @@
         .closed-overlay {
             backdrop-filter: blur(10px);
             background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Fix para h-screen en móviles */
+        @supports (-webkit-touch-callout: none) {
+            .h-screen {
+                min-height: -webkit-fill-available;
+            }
+        }
+
+        /* Permitir scroll en contenedores flex-1 */
+        .overflow-y-auto {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Asegurar que los padres permitan scroll */
+        .flex-1 {
+            flex: 1 1 0%;
+            min-height: 0;
+        }
+
+        /* Mejor scroll en webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Scroll más suave en iOS */
+        * {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -889,13 +952,16 @@
             loadBusinessData();
         });
 
-        // Prevenir zoom accidental
+        // Prevenir zoom con pellizco (pero permitir scroll)
         document.addEventListener('touchmove', function(event) {
-            if (event.scale !== 1) {
+            if (event.scale !== undefined && event.scale !== 1) {
                 event.preventDefault();
             }
         }, { passive: false });
 
+        // Prevenir doble tap zoom solo en elementos específicos (no en todo el documento)
+        // Comentado para permitir mejor interacción
+        /*
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function(event) {
             const now = (new Date()).getTime();
@@ -904,6 +970,7 @@
             }
             lastTouchEnd = now;
         }, false);
+        */
 
         // Recargar datos cada 5 minutos para verificar si está abierto
         setInterval(() => {
