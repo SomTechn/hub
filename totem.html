@@ -175,14 +175,14 @@
     <script>
         // ==================== CONFIGURACIÓN ====================
         const CONFIG = {
-            SUPABASE_URL: 'https://osmghhkskiqrzxnbnsyf.supabase.co',  // Reemplazar
-            SUPABASE_ANON_KEY: 'sb_publishable_KFNd_uM0YM2y6x5tWBWr-Q_Oi5NofzM',  // Reemplazar
+            SUPABASE_URL: 'TU_SUPABASE_URL_AQUI',  // Reemplazar
+            SUPABASE_ANON_KEY: 'TU_SUPABASE_ANON_KEY_AQUI',  // Reemplazar
             BUSINESS_SLUG: window.location.pathname.split('/').pop() || 'demo-restaurant',  // Obtener de URL
             BILL_OPTIONS: [50, 100, 200, 500]
         };
 
         // Inicializar Supabase
-        const supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
         // ==================== ESTADO DE LA APLICACIÓN ====================
         let state = {
@@ -208,7 +208,7 @@
                 state.error = null;
                 
                 // Llamar a la función RPC que obtiene todos los datos
-                const { data, error } = await supabase.rpc('get_business_data', {
+                const { data, error } = await supabaseClient.rpc('get_business_data', {
                     business_slug: CONFIG.BUSINESS_SLUG
                 });
 
@@ -246,7 +246,7 @@
                 
                 if (state.customerPhone) {
                     // Buscar cliente existente
-                    let { data: existingCustomer } = await supabase
+                    let { data: existingCustomer } = await supabaseClient
                         .from('customers')
                         .select('*')
                         .eq('phone', state.customerPhone)
@@ -256,7 +256,7 @@
                         customerId = existingCustomer.id;
                     } else {
                         // Crear nuevo cliente
-                        const { data: newCustomer, error } = await supabase
+                        const { data: newCustomer, error } = await supabaseClient
                             .from('customers')
                             .insert({
                                 phone: state.customerPhone,
@@ -279,7 +279,7 @@
                 }
 
                 // Crear orden
-                const { data: order, error } = await supabase
+                const { data: order, error } = await supabaseClient
                     .from('orders')
                     .insert({
                         business_id: state.business.id,
