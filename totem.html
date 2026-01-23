@@ -789,6 +789,11 @@
             const business = state.business;
             const pointsEarned = business.points_enabled ? Math.floor(cartTotal / business.points_ratio) : 0;
             
+            // Extraer solo el consecutivo del número completo
+            // Formato completo: 260123-100-001
+            // Consecutivo: 001
+            const consecutivo = state.orderNumber ? state.orderNumber.split('-').pop() : '000';
+            
             return `
                 <div class="h-full flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 px-3 sm:px-4 py-3 fade-in overflow-y-auto scrollable-content">
                     <div class="w-full max-w-3xl my-auto">
@@ -802,10 +807,11 @@
                             
                             <!-- Contenido -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                                <!-- Número -->
+                                <!-- Número de Orden - GRANDE -->
                                 <div class="bg-blue-50 rounded-lg p-3 border-2 border-blue-200 text-center">
                                     <p class="text-xs sm:text-sm text-gray-600 mb-1">Tu número:</p>
-                                    <p class="text-4xl sm:text-5xl font-display font-bold text-blue-900">#${state.orderNumber}</p>
+                                    <p class="text-6xl sm:text-7xl font-display font-bold text-blue-900">${consecutivo}</p>
+                                    <p class="text-xs text-gray-500 mt-1">${state.orderNumber}</p>
                                 </div>
 
                                 <!-- Detalles -->
@@ -835,6 +841,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 items-center">
                                 <div class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-2 text-center">
                                     <p class="text-sm font-bold text-yellow-800">📍 Pasa a caja</p>
+                                    <p class="text-xs text-yellow-700">Di el número: <strong>${consecutivo}</strong></p>
                                 </div>
                                 
                                 <button 
