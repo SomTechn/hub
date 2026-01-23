@@ -1,9 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="es">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e3a8a">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1046/1046784.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -745,14 +742,17 @@
                                             onchange="selectCustomBill(this.value)">
                                     </div>
                                     
-                                    ${state.selectedBill && state.selectedBill < cartTotal ? `
-                                        <p class="text-red-600 font-bold text-xs sm:text-sm">⚠️ Monto menor al total</p>
-                                    ` : ''}
-                                    ${state.selectedBill && state.selectedBill >= cartTotal ? `
-                                        <div class="bg-green-50 border-2 border-green-300 rounded-lg p-2">
-                                            <p class="text-green-700 font-bold text-xs sm:text-sm">✓ Cambio: <span class="text-base sm:text-lg">L ${(state.selectedBill - cartTotal).toFixed(2)}</span></p>
-                                        </div>
-                                    ` : ''}
+                                    <!-- Mensaje de cambio (se actualiza dinámicamente) -->
+                                    <div id="changeMessage">
+                                        ${state.selectedBill && state.selectedBill < cartTotal ? `
+                                            <p class="text-red-600 font-bold text-xs sm:text-sm">⚠️ Monto menor al total</p>
+                                        ` : ''}
+                                        ${state.selectedBill && state.selectedBill >= cartTotal ? `
+                                            <div class="bg-green-50 border-2 border-green-300 rounded-lg p-2">
+                                                <p class="text-green-700 font-bold text-xs sm:text-sm">✓ Cambio: <span class="text-base sm:text-lg">L ${(state.selectedBill - cartTotal).toFixed(2)}</span></p>
+                                            </div>
+                                        ` : ''}
+                                    </div>
                                 </div>
 
                                 ${business.points_enabled ? `
@@ -886,16 +886,67 @@
 
         function selectBill(amount) {
             state.selectedBill = amount;
-            const customInput = document.getElementById('customBillAmount');
-            if (customInput) customInput.value = '';
-            render();
+            // NO llamar render() para no perder el foco de los inputs
+            // Solo actualizar visualmente los botones y el cambio
+            updateBillSelection();
         }
 
         function selectCustomBill(amount) {
             const numAmount = parseFloat(amount);
             if (numAmount && numAmount > 0) {
                 state.selectedBill = numAmount;
-                render();
+                updateBillSelection();
+            }
+        }
+
+        function updateBillSelection() {
+            // Actualizar solo la UI de billetes sin re-renderizar todo
+            const buttons = document.querySelectorAll('.bill-option');
+            buttons.forEach(btn => {
+                const btnAmount = parseFloat(btn.textContent.replace('L', '').trim());
+                if (btnAmount === state.selectedBill) {
+                    btn.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'border-2', 'border-gray-300');
+                    btn.classList.add('bill-selected');
+                } else {
+                    btn.classList.remove('bill-selected');
+                    btn.classList.add('bg-gray-100', 'hover:bg-gray-200', 'border-2', 'border-gray-300');
+                }
+            });
+
+            // Actualizar mensaje de cambio
+            const cartTotal = getCartTotal();
+            const changeContainer = document.getElementById('changeMessage');
+            if (changeContainer) {
+                if (state.selectedBill && state.selectedBill < cartTotal) {
+                    changeContainer.innerHTML = '<p class="text-red-600 font-bold text-xs sm:text-sm">⚠️ Monto menor al total</p>';
+                } else if (state.selectedBill && state.selectedBill >= cartTotal) {
+                    const change = (state.selectedBill - cartTotal).toFixed(2);
+                    changeContainer.innerHTML = `
+                        <div class="bg-green-50 border-2 border-green-300 rounded-lg p-2">
+                            <p class="text-green-700 font-bold text-xs sm:text-sm">✓ Cambio: <span class="text-base sm:text-lg">L ${change}</span></p>
+                        </div>
+                    `;
+                } else {
+                    changeContainer.innerHTML = '';
+                }
+            }
+
+            // Actualizar estado del botón confirmar
+            const confirmBtn = document.querySelector('button[onclick="confirmOrder()"]');
+            if (confirmBtn) {
+                const nameInput = document.getElementById('customerName');
+                const phoneInput = document.getElementById('customerPhone');
+                const canConfirm = nameInput?.value && phoneInput?.value && state.selectedBill && state.selectedBill >= cartTotal;
+                
+                if (canConfirm) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                    confirmBtn.classList.add('btn-primary');
+                } else {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.remove('btn-primary');
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                }
             }
         }
 
@@ -975,13 +1026,5 @@
             }
         }, 5 * 60 * 1000);
     </script>
-    // Registrar el Service Worker para habilitar la instalación
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker registrado'))
-            .catch(err => console.error('Error al registrar SW', err));
-    });
-}
 </body>
 </html>
