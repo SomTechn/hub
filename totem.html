@@ -175,18 +175,14 @@
     <script>
         // ==================== CONFIGURACIÓN ====================
         const CONFIG = {
-            SUPABASE_URL: 'https://osmghhkskiqrzxnbnsyf.supabase.co',  // Reemplazar
-            SUPABASE_ANON_KEY: 'sb_publishable_KFNd_uM0YM2y6x5tWBWr-Q_Oi5NofzM',  // Reemplazar
+            SUPABASE_URL: 'TU_SUPABASE_URL_AQUI',  // Reemplazar
+            SUPABASE_ANON_KEY: 'TU_SUPABASE_ANON_KEY_AQUI',  // Reemplazar
             BUSINESS_SLUG: window.location.pathname.split('/').pop() || 'demo-restaurant',  // Obtener de URL
             BILL_OPTIONS: [50, 100, 200, 500]
         };
 
         // Inicializar Supabase
-        if (typeof supabase === 'undefined') {
-    window.supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-} else {
-    window.supabaseClient = supabase;
-}
+        const supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
         // ==================== ESTADO DE LA APLICACIÓN ====================
         let state = {
