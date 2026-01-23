@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="screen-orientation" content="landscape">
     <title>Somar Totem - Autoservicio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -303,51 +304,51 @@
             
             return `
                 <div class="h-screen flex flex-col bg-gray-50">
-                    <!-- Header -->
-                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-4 sm:px-8 py-4 sm:py-6 shadow-xl">
+                    <!-- Header compacto -->
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-8 py-4 shadow-xl">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h1 class="text-2xl sm:text-3xl md:text-4xl font-display font-bold">Somar Totem</h1>
-                                <p class="text-blue-200 text-sm sm:text-base md:text-lg mt-1">Selecciona tus productos</p>
+                                <h1 class="text-3xl font-display font-bold">Somar Totem</h1>
+                                <p class="text-blue-200 text-sm mt-1">Selecciona tus productos</p>
                             </div>
                             <button 
                                 onclick="viewCart()"
-                                class="bg-green-500 hover:bg-green-600 px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-xl relative shadow-lg transform hover:scale-105 transition">
-                                🛒 <span class="hidden sm:inline">Ver Carrito</span>
-                                ${cartCount > 0 ? `<span class="cart-badge absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-base sm:text-lg font-bold shadow-lg">${cartCount}</span>` : ''}
+                                class="bg-green-500 hover:bg-green-600 px-8 py-3 rounded-2xl font-bold text-xl relative shadow-lg transform hover:scale-105 transition">
+                                🛒 Ver Carrito
+                                ${cartCount > 0 ? `<span class="cart-badge absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold shadow-lg">${cartCount}</span>` : ''}
                             </button>
                         </div>
                     </div>
 
-                    <!-- Categorías -->
-                    <div class="bg-white shadow-md px-4 sm:px-8 py-4 sm:py-6 overflow-x-auto">
-                        <div class="flex gap-2 sm:gap-4">
+                    <!-- Categorías compactas -->
+                    <div class="bg-white shadow-md px-8 py-3">
+                        <div class="flex gap-3 justify-center">
                             ${CATEGORIES.map(cat => `
                                 <button 
                                     onclick="changeCategory('${cat.id}')"
-                                    class="${state.activeCategory === cat.id ? 'tab-active' : 'tab-inactive'} px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-xl transition-all transform hover:scale-105 flex-shrink-0">
-                                    <span class="text-xl sm:text-2xl mr-1 sm:mr-2">${cat.icon}</span>
-                                    <span class="hidden sm:inline">${cat.name}</span>
+                                    class="${state.activeCategory === cat.id ? 'tab-active' : 'tab-inactive'} px-8 py-3 rounded-2xl font-bold text-lg transition-all transform hover:scale-105 flex-shrink-0">
+                                    <span class="text-2xl mr-2">${cat.icon}</span>
+                                    ${cat.name}
                                 </button>
                             `).join('')}
                         </div>
                     </div>
 
-                    <!-- Grid de Productos -->
-                    <div class="flex-1 overflow-y-auto px-4 sm:px-8 py-4 sm:py-6">
-                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                    <!-- Grid de Productos - 4 columnas para aprovechar el ancho -->
+                    <div class="flex-1 overflow-y-auto px-8 py-5">
+                        <div class="grid grid-cols-4 gap-5 max-w-7xl mx-auto">
                             ${PRODUCTS[state.activeCategory].map(product => `
-                                <div class="product-card bg-white rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border-2 sm:border-4 border-gray-100 hover:border-green-500">
-                                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-8 flex items-center justify-center h-32 sm:h-48">
-                                        <span class="text-5xl sm:text-8xl">${product.image}</span>
+                                <div class="product-card bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-gray-100 hover:border-green-500">
+                                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 flex items-center justify-center h-32">
+                                        <span class="text-6xl">${product.image}</span>
                                     </div>
-                                    <div class="p-3 sm:p-6">
-                                        <h3 class="font-display font-bold text-base sm:text-2xl text-gray-800 mb-2">${product.name}</h3>
-                                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-2 sm:mt-4 gap-2">
-                                            <p class="text-xl sm:text-3xl font-bold text-green-600">L ${product.price}</p>
+                                    <div class="p-4">
+                                        <h3 class="font-display font-bold text-lg text-gray-800 mb-2 h-14 flex items-center">${product.name}</h3>
+                                        <div class="flex items-center justify-between mt-3">
+                                            <p class="text-2xl font-bold text-green-600">L ${product.price}</p>
                                             <button 
                                                 onclick='addToCart(${JSON.stringify(product)})'
-                                                class="btn-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold text-sm sm:text-xl w-full sm:w-auto">
+                                                class="btn-primary text-white px-4 py-2 rounded-xl font-bold text-base">
                                                 + Agregar
                                             </button>
                                         </div>
@@ -357,17 +358,17 @@
                         </div>
                     </div>
 
-                    <!-- Footer con Total -->
+                    <!-- Footer compacto con Total -->
                     ${cartCount > 0 ? `
-                        <div class="bg-white border-t-4 border-green-500 px-4 sm:px-8 py-4 sm:py-6 shadow-2xl">
-                            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
-                                <div class="text-center sm:text-left">
-                                    <p class="text-gray-600 text-sm sm:text-lg">Total de tu pedido:</p>
-                                    <p class="text-3xl sm:text-4xl font-display font-bold text-green-600">L ${cartTotal}</p>
+                        <div class="bg-white border-t-4 border-green-500 px-8 py-4 shadow-2xl">
+                            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                                <div>
+                                    <p class="text-gray-600 text-base">Total de tu pedido:</p>
+                                    <p class="text-3xl font-display font-bold text-green-600">L ${cartTotal}</p>
                                 </div>
                                 <button 
                                     onclick="viewCart()"
-                                    class="btn-primary text-white px-8 sm:px-12 py-5 sm:py-6 rounded-2xl font-display font-bold text-xl sm:text-2xl w-full sm:w-auto">
+                                    class="btn-primary text-white px-12 py-5 rounded-2xl font-display font-bold text-2xl">
                                     Continuar →
                                 </button>
                             </div>
@@ -384,11 +385,11 @@
                 return `
                     <div class="h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
                         <div class="text-center">
-                            <p class="text-6xl sm:text-8xl mb-6 sm:mb-8">🛒</p>
-                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-700 mb-4">Tu carrito está vacío</h2>
+                            <p class="text-7xl mb-6">🛒</p>
+                            <h2 class="text-3xl font-display font-bold text-gray-700 mb-4">Tu carrito está vacío</h2>
                             <button 
                                 onclick="backToMenu()"
-                                class="btn-primary text-white px-8 sm:px-12 py-5 sm:py-6 rounded-2xl font-bold text-xl sm:text-2xl mt-6 sm:mt-8">
+                                class="btn-primary text-white px-12 py-5 rounded-2xl font-bold text-xl mt-6">
                                 ← Volver al Menú
                             </button>
                         </div>
@@ -398,47 +399,45 @@
 
             return `
                 <div class="h-screen flex flex-col bg-gray-50">
-                    <!-- Header -->
-                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-4 sm:px-8 py-4 sm:py-6 shadow-xl">
+                    <!-- Header compacto -->
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-8 py-4 shadow-xl">
                         <div class="flex items-center justify-between">
                             <button 
                                 onclick="backToMenu()"
-                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold text-base sm:text-lg transition">
+                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-6 py-3 rounded-xl font-bold text-lg transition">
                                 ← Volver
                             </button>
-                            <h1 class="text-2xl sm:text-3xl md:text-4xl font-display font-bold">Tu Pedido</h1>
-                            <div class="w-16 sm:w-32"></div>
+                            <h1 class="text-3xl font-display font-bold">Tu Pedido</h1>
+                            <div class="w-32"></div>
                         </div>
                     </div>
 
-                    <!-- Items del Carrito -->
-                    <div class="flex-1 overflow-y-auto px-4 sm:px-8 py-4 sm:py-6">
-                        <div class="space-y-3 sm:space-y-4">
+                    <!-- Items del Carrito - Layout compacto -->
+                    <div class="flex-1 overflow-y-auto px-8 py-5">
+                        <div class="space-y-3 max-w-6xl mx-auto">
                             ${state.cart.map(item => `
-                                <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 slide-in border-2 border-gray-100">
-                                    <div class="flex items-center justify-between gap-2 sm:gap-4">
-                                        <div class="flex items-center gap-3 sm:gap-6 flex-1 min-w-0">
-                                            <span class="text-4xl sm:text-6xl flex-shrink-0">${item.image}</span>
-                                            <div class="min-w-0">
-                                                <h3 class="font-display font-bold text-lg sm:text-2xl text-gray-800 truncate">${item.name}</h3>
-                                                <p class="text-base sm:text-xl text-green-600 font-bold mt-1">L ${item.price} c/u</p>
+                                <div class="bg-white rounded-2xl shadow-lg p-5 slide-in border-2 border-gray-100">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-6 flex-1">
+                                            <span class="text-5xl">${item.image}</span>
+                                            <div>
+                                                <h3 class="font-display font-bold text-xl text-gray-800">${item.name}</h3>
+                                                <p class="text-lg text-green-600 font-bold mt-1">L ${item.price} c/u</p>
                                             </div>
                                         </div>
-                                        <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 flex-shrink-0">
-                                            <div class="flex items-center gap-2 sm:gap-4">
-                                                <button 
-                                                    onclick="updateQuantity(${item.id}, -1)"
-                                                    class="quantity-btn bg-red-500 hover:bg-red-600 text-white w-10 h-10 sm:w-14 sm:h-14 rounded-xl font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-lg">
-                                                    −
-                                                </button>
-                                                <span class="text-2xl sm:text-3xl font-bold text-gray-800 w-10 sm:w-16 text-center">${item.quantity}</span>
-                                                <button 
-                                                    onclick="updateQuantity(${item.id}, 1)"
-                                                    class="quantity-btn bg-green-500 hover:bg-green-600 text-white w-10 h-10 sm:w-14 sm:h-14 rounded-xl font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-lg">
-                                                    +
-                                                </button>
-                                            </div>
-                                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 w-20 sm:w-32 text-right">L ${item.price * item.quantity}</p>
+                                        <div class="flex items-center gap-4">
+                                            <button 
+                                                onclick="updateQuantity(${item.id}, -1)"
+                                                class="quantity-btn bg-red-500 hover:bg-red-600 text-white w-12 h-12 rounded-xl font-bold text-2xl flex items-center justify-center shadow-lg">
+                                                −
+                                            </button>
+                                            <span class="text-2xl font-bold text-gray-800 w-14 text-center">${item.quantity}</span>
+                                            <button 
+                                                onclick="updateQuantity(${item.id}, 1)"
+                                                class="quantity-btn bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-xl font-bold text-2xl flex items-center justify-center shadow-lg">
+                                                +
+                                            </button>
+                                            <p class="text-2xl font-bold text-gray-800 ml-4 w-28 text-right">L ${item.price * item.quantity}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -446,16 +445,16 @@
                         </div>
                     </div>
 
-                    <!-- Footer con Total y Checkout -->
-                    <div class="bg-white border-t-4 border-green-500 px-4 sm:px-8 py-4 sm:py-6 shadow-2xl">
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 sm:mb-0">
-                            <div class="text-center sm:text-left">
-                                <p class="text-gray-600 text-lg sm:text-xl">Total a pagar:</p>
-                                <p class="text-4xl sm:text-5xl font-display font-bold text-green-600">L ${cartTotal}</p>
+                    <!-- Footer compacto -->
+                    <div class="bg-white border-t-4 border-green-500 px-8 py-5 shadow-2xl">
+                        <div class="flex items-center justify-between max-w-6xl mx-auto">
+                            <div>
+                                <p class="text-gray-600 text-lg">Total a pagar:</p>
+                                <p class="text-4xl font-display font-bold text-green-600">L ${cartTotal}</p>
                             </div>
                             <button 
                                 onclick="proceedToCheckout()"
-                                class="btn-primary text-white px-10 sm:px-16 py-6 sm:py-8 rounded-2xl font-display font-bold text-xl sm:text-2xl md:text-3xl w-full sm:w-auto">
+                                class="btn-primary text-white px-16 py-6 rounded-2xl font-display font-bold text-2xl">
                                 Confirmar Pedido →
                             </button>
                         </div>
@@ -469,67 +468,74 @@
             
             return `
                 <div class="h-screen flex flex-col bg-gray-50">
-                    <!-- Header -->
-                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-4 sm:px-8 py-4 sm:py-6 shadow-xl">
+                    <!-- Header compacto -->
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-8 py-4 shadow-xl">
                         <div class="flex items-center justify-between">
                             <button 
                                 onclick="backToCart()"
-                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold text-base sm:text-lg transition">
+                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-6 py-3 rounded-xl font-bold text-lg transition">
                                 ← Volver
                             </button>
-                            <h1 class="text-2xl sm:text-3xl md:text-4xl font-display font-bold">Finalizar Pedido</h1>
-                            <div class="w-16 sm:w-32"></div>
+                            <h1 class="text-3xl font-display font-bold">Finalizar Pedido</h1>
+                            <div class="w-32"></div>
                         </div>
                     </div>
 
-                    <!-- Formulario -->
-                    <div class="flex-1 overflow-y-auto px-4 sm:px-8 py-4 sm:py-8">
-                        <div class="max-w-3xl mx-auto">
-                            <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 slide-in">
-                                <h2 class="text-2xl sm:text-3xl font-display font-bold text-gray-800 mb-6 sm:mb-8">📋 Información del Cliente</h2>
+                    <!-- Contenido en Grid Horizontal -->
+                    <div class="flex-1 overflow-y-auto px-8 py-6">
+                        <div class="max-w-6xl mx-auto">
+                            <div class="bg-white rounded-3xl shadow-2xl p-8">
+                                <h2 class="text-2xl font-display font-bold text-gray-800 mb-6 text-center">📋 Información del Cliente</h2>
                                 
-                                <div class="space-y-4 sm:space-y-6">
-                                    <div>
-                                        <label class="block text-lg sm:text-xl font-bold text-gray-700 mb-2 sm:mb-3">Nombre completo *</label>
-                                        <input 
-                                            type="text"
-                                            id="customerName"
-                                            value="${state.customerName}"
-                                            onchange="updateCustomerName(this.value)"
-                                            placeholder="Ej: Juan Pérez"
-                                            class="w-full px-4 sm:px-6 py-4 sm:py-5 border-4 border-gray-300 rounded-2xl text-xl sm:text-2xl font-medium focus:border-green-500 transition"
-                                            required>
+                                <!-- Grid de 2 columnas para el formulario -->
+                                <div class="grid grid-cols-2 gap-8 mb-6">
+                                    <!-- Columna Izquierda: Datos del Cliente -->
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="block text-lg font-bold text-gray-700 mb-2">Nombre completo *</label>
+                                            <input 
+                                                type="text"
+                                                id="customerName"
+                                                value="${state.customerName}"
+                                                onchange="updateCustomerName(this.value)"
+                                                placeholder="Ej: Juan Pérez"
+                                                class="w-full px-5 py-4 border-4 border-gray-300 rounded-2xl text-xl font-medium focus:border-green-500 transition"
+                                                required>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-lg font-bold text-gray-700 mb-2">Número de celular *</label>
+                                            <input 
+                                                type="tel"
+                                                id="customerPhone"
+                                                value="${state.customerPhone}"
+                                                onchange="updateCustomerPhone(this.value)"
+                                                placeholder="Ej: 9999-9999"
+                                                class="w-full px-5 py-4 border-4 border-gray-300 rounded-2xl text-xl font-medium focus:border-green-500 transition"
+                                                required>
+                                        </div>
                                     </div>
 
+                                    <!-- Columna Derecha: Selección de Billete -->
                                     <div>
-                                        <label class="block text-lg sm:text-xl font-bold text-gray-700 mb-2 sm:mb-3">Número de celular *</label>
-                                        <input 
-                                            type="tel"
-                                            id="customerPhone"
-                                            value="${state.customerPhone}"
-                                            onchange="updateCustomerPhone(this.value)"
-                                            placeholder="Ej: 9999-9999"
-                                            class="w-full px-4 sm:px-6 py-4 sm:py-5 border-4 border-gray-300 rounded-2xl text-xl sm:text-2xl font-medium focus:border-green-500 transition"
-                                            required>
-                                    </div>
-
-                                    <div class="border-t-4 border-gray-200 pt-4 sm:pt-6 mt-4 sm:mt-6">
-                                        <label class="block text-lg sm:text-xl font-bold text-gray-700 mb-3 sm:mb-4">💰 ¿Con cuánto pagarás en caja?</label>
-                                        <p class="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">Selecciona el billete para agilizar tu cambio:</p>
-                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                                        <label class="block text-lg font-bold text-gray-700 mb-2">💰 ¿Con cuánto pagarás en caja?</label>
+                                        <p class="text-gray-600 mb-4 text-sm">Selecciona el billete para agilizar tu cambio:</p>
+                                        <div class="grid grid-cols-2 gap-4 mb-4">
                                             ${BILL_OPTIONS.map(amount => `
                                                 <button 
                                                     onclick="selectBill(${amount})"
-                                                    class="bill-option ${state.selectedBill === amount ? 'bill-selected' : 'bg-gray-100 hover:bg-gray-200 border-4 border-gray-300'} py-5 sm:py-6 rounded-2xl font-bold text-xl sm:text-2xl">
+                                                    class="bill-option ${state.selectedBill === amount ? 'bill-selected' : 'bg-gray-100 hover:bg-gray-200 border-4 border-gray-300'} py-5 rounded-2xl font-bold text-2xl">
                                                     L ${amount}
                                                 </button>
                                             `).join('')}
                                         </div>
                                         ${state.selectedBill && state.selectedBill < cartTotal ? `
-                                            <p class="text-red-600 font-bold text-base sm:text-lg mt-3 sm:mt-4">⚠️ El monto seleccionado es menor al total. Selecciona un billete mayor.</p>
+                                            <p class="text-red-600 font-bold text-base">⚠️ El monto es menor al total. Selecciona un billete mayor.</p>
                                         ` : ''}
                                         ${state.selectedBill && state.selectedBill >= cartTotal ? `
-                                            <p class="text-green-600 font-bold text-base sm:text-lg mt-3 sm:mt-4">✓ Cambio: L ${state.selectedBill - cartTotal}</p>
+                                            <div class="bg-green-50 border-2 border-green-300 rounded-xl p-4">
+                                                <p class="text-green-700 font-bold text-lg">✓ Cambio: <span class="text-2xl">L ${state.selectedBill - cartTotal}</span></p>
+                                            </div>
                                         ` : ''}
                                     </div>
                                 </div>
@@ -537,17 +543,17 @@
                         </div>
                     </div>
 
-                    <!-- Footer -->
-                    <div class="bg-white border-t-4 border-green-500 px-4 sm:px-8 py-4 sm:py-6 shadow-2xl">
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div class="text-center sm:text-left">
-                                <p class="text-gray-600 text-lg sm:text-xl">Total a pagar:</p>
-                                <p class="text-4xl sm:text-5xl font-display font-bold text-green-600">L ${cartTotal}</p>
+                    <!-- Footer compacto -->
+                    <div class="bg-white border-t-4 border-green-500 px-8 py-5 shadow-2xl">
+                        <div class="flex items-center justify-between max-w-6xl mx-auto">
+                            <div>
+                                <p class="text-gray-600 text-lg">Total a pagar:</p>
+                                <p class="text-4xl font-display font-bold text-green-600">L ${cartTotal}</p>
                             </div>
                             <button 
                                 onclick="confirmOrder()"
                                 ${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'disabled' : ''}
-                                class="${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'btn-primary'} text-white px-10 sm:px-16 py-6 sm:py-8 rounded-2xl font-display font-bold text-xl sm:text-2xl md:text-3xl w-full sm:w-auto">
+                                class="${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'btn-primary'} text-white px-16 py-6 rounded-2xl font-display font-bold text-2xl">
                                 ✓ Confirmar Pedido
                             </button>
                         </div>
@@ -561,48 +567,57 @@
             const change = state.selectedBill - cartTotal;
             
             return `
-                <div class="h-screen flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 px-4 sm:px-6 py-4 fade-in">
-                    <div class="w-full max-w-2xl">
-                        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 text-center">
-                            <div class="text-5xl sm:text-6xl mb-3">✅</div>
-                            <h1 class="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-800 mb-2">¡Pedido Confirmado!</h1>
-                            <p class="text-base sm:text-lg text-gray-600 mb-4">Gracias por tu orden, ${state.customerName}</p>
-                            
-                            <div class="bg-blue-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-4 border-3 border-blue-200">
-                                <p class="text-gray-600 text-sm sm:text-base mb-1">Tu número de orden es:</p>
-                                <p class="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-blue-900">#${state.orderNumber}</p>
+                <div class="h-screen flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 px-8 py-6 fade-in">
+                    <div class="w-full max-w-6xl">
+                        <div class="bg-white rounded-3xl shadow-2xl p-8">
+                            <!-- Header -->
+                            <div class="text-center mb-6">
+                                <div class="text-6xl mb-2">✅</div>
+                                <h1 class="text-4xl font-display font-bold text-gray-800">¡Pedido Confirmado!</h1>
+                                <p class="text-xl text-gray-600 mt-1">Gracias por tu orden, ${state.customerName}</p>
                             </div>
+                            
+                            <!-- Contenido en 2 columnas -->
+                            <div class="grid grid-cols-2 gap-8 mb-6">
+                                <!-- Columna Izquierda: Número de Orden -->
+                                <div class="bg-blue-50 rounded-2xl p-6 border-4 border-blue-200 flex flex-col items-center justify-center">
+                                    <p class="text-gray-600 text-lg mb-2">Tu número de orden es:</p>
+                                    <p class="text-7xl font-display font-bold text-blue-900">#${state.orderNumber}</p>
+                                </div>
 
-                            <div class="bg-gray-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4">
-                                <div class="flex justify-between items-center mb-2">
-                                    <p class="text-sm sm:text-base text-gray-600">Total:</p>
-                                    <p class="text-xl sm:text-2xl font-bold text-gray-800">L ${cartTotal}</p>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <p class="text-sm sm:text-base text-gray-600">Pagarás con:</p>
-                                    <p class="text-xl sm:text-2xl font-bold text-blue-600">L ${state.selectedBill}</p>
-                                </div>
-                                <div class="border-t-2 border-gray-300 pt-2 mt-2">
+                                <!-- Columna Derecha: Detalles de Pago -->
+                                <div class="bg-gray-50 rounded-2xl p-6 flex flex-col justify-center">
+                                    <div class="flex justify-between items-center mb-4 pb-4 border-b-2 border-gray-300">
+                                        <p class="text-xl text-gray-600">Total:</p>
+                                        <p class="text-3xl font-bold text-gray-800">L ${cartTotal}</p>
+                                    </div>
+                                    <div class="flex justify-between items-center mb-4 pb-4 border-b-2 border-gray-300">
+                                        <p class="text-xl text-gray-600">Pagarás con:</p>
+                                        <p class="text-3xl font-bold text-blue-600">L ${state.selectedBill}</p>
+                                    </div>
                                     <div class="flex justify-between items-center">
-                                        <p class="text-base sm:text-lg font-bold text-gray-700">Tu cambio:</p>
-                                        <p class="text-2xl sm:text-3xl font-bold text-green-600">L ${change}</p>
+                                        <p class="text-2xl font-bold text-gray-700">Tu cambio:</p>
+                                        <p class="text-4xl font-bold text-green-600">L ${change}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-yellow-50 border-3 border-yellow-300 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4">
-                                <p class="text-lg sm:text-xl font-bold text-yellow-800 mb-1">📍 Siguiente paso:</p>
-                                <p class="text-sm sm:text-base text-yellow-700">Pasa a caja a pagar tu orden</p>
+                            <!-- Footer con Siguiente Paso y Botón -->
+                            <div class="grid grid-cols-2 gap-6 items-center">
+                                <div class="bg-yellow-50 border-4 border-yellow-300 rounded-2xl p-5 text-center">
+                                    <p class="text-2xl font-bold text-yellow-800 mb-1">📍 Siguiente paso:</p>
+                                    <p class="text-lg text-yellow-700">Pasa a caja a pagar tu orden</p>
+                                </div>
+                                
+                                <button 
+                                    onclick="resetApp()"
+                                    class="btn-secondary text-white px-12 py-6 rounded-2xl font-display font-bold text-2xl">
+                                    ← Volver al Inicio
+                                </button>
                             </div>
 
-                            <button 
-                                onclick="resetApp()"
-                                class="btn-secondary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-display font-bold text-lg sm:text-xl w-full sm:w-auto">
-                                ← Volver al Inicio
-                            </button>
+                            <p class="text-gray-500 text-center mt-6">Gracias por usar Somar Totem 🇭🇳</p>
                         </div>
-
-                        <p class="text-white text-sm sm:text-base mt-3 sm:mt-4 opacity-75 text-center">Gracias por usar Somar Totem 🇭🇳</p>
                     </div>
                 </div>
             `;
