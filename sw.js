@@ -1,4 +1,4 @@
-const CACHE_NAME = 'somar-totem-v1';
+const CACHE_NAME = 'somar-tap-v1';
 
 // No guarda nada en caché por ahora para que veas tus cambios en tiempo real
 self.addEventListener('install', (event) => {
