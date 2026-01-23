@@ -1,6 +1,6 @@
 {
-  "name": "Somar Totem - Autoservicio",
-  "short_name": "SomarTotem",
+  "name": "Somar Tap - Autoservicio",
+  "short_name": "SomarTap",
   "description": "Sistema de autoservicio para restaurantes",
   "start_url": "./totem.html",
   "display": "standalone",
