@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Somar Totem - Autoservicio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.96);
+        }
+
+        .product-card {
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .product-card:active {
+            transform: scale(0.95);
+        }
+
+        .tab-active {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.4);
+        }
+
+        .tab-inactive {
+            background: white;
+            color: #1e3a8a;
+            border: 2px solid #e5e7eb;
+        }
+
+        .cart-badge {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .welcome-bg {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(30, 64, 175, 0.9) 100%),
+                        url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect fill="%231e3a8a" width="100" height="100"/><circle cx="50" cy="50" r="40" fill="%231e40af" opacity="0.1"/></svg>');
+            background-size: cover, 100px 100px;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+
+        .quantity-btn {
+            transition: all 0.15s ease;
+        }
+
+        .quantity-btn:active {
+            transform: scale(0.9);
+        }
+
+        .bill-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .bill-option:active {
+            transform: scale(0.96);
+        }
+
+        .bill-selected {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="app"></div>
+
+    <script>
+        // ==================== DATOS DE LA APLICACIÓN ====================
+        const PRODUCTS = {
+            baleadas: [
+                { id: 1, name: 'Baleada Sencilla', price: 25, image: '🌯', category: 'baleadas' },
+                { id: 2, name: 'Baleada con Huevo', price: 35, image: '🌯', category: 'baleadas' },
+                { id: 3, name: 'Baleada Especial', price: 45, image: '🌯', category: 'baleadas' },
+                { id: 4, name: 'Baleada con Carne', price: 55, image: '🌯', category: 'baleadas' },
+                { id: 5, name: 'Baleada Mixta', price: 60, image: '🌯', category: 'baleadas' },
+                { id: 6, name: 'Baleada con Aguacate', price: 50, image: '🥑', category: 'baleadas' }
+            ],
+            pollos: [
+                { id: 7, name: 'Pollo Frito (Piezas)', price: 85, image: '🍗', category: 'pollos' },
+                { id: 8, name: 'Pollo Asado Completo', price: 180, image: '🍗', category: 'pollos' },
+                { id: 9, name: 'Alitas BBQ (6 pzas)', price: 95, image: '🍗', category: 'pollos' },
+                { id: 10, name: 'Nuggets (10 pzas)', price: 70, image: '🍗', category: 'pollos' },
+                { id: 11, name: 'Pollo a la Plancha', price: 90, image: '🍗', category: 'pollos' },
+                { id: 12, name: 'Pechuga Empanizada', price: 95, image: '🍗', category: 'pollos' }
+            ],
+            bebidas: [
+                { id: 13, name: 'Coca Cola 500ml', price: 20, image: '🥤', category: 'bebidas' },
+                { id: 14, name: 'Fresco Natural', price: 15, image: '🧃', category: 'bebidas' },
+                { id: 15, name: 'Café Hondureño', price: 25, image: '☕', category: 'bebidas' },
+                { id: 16, name: 'Agua Embotellada', price: 10, image: '💧', category: 'bebidas' },
+                { id: 17, name: 'Jugo Natural', price: 30, image: '🍹', category: 'bebidas' },
+                { id: 18, name: 'Horchata', price: 20, image: '🥛', category: 'bebidas' }
+            ],
+            extras: [
+                { id: 19, name: 'Papas Fritas', price: 30, image: '🍟', category: 'extras' },
+                { id: 20, name: 'Ensalada Fresca', price: 35, image: '🥗', category: 'extras' },
+                { id: 21, name: 'Yuca Frita', price: 25, image: '🍠', category: 'extras' },
+                { id: 22, name: 'Tajadas', price: 20, image: '🍌', category: 'extras' },
+                { id: 23, name: 'Queso Frito', price: 40, image: '🧀', category: 'extras' },
+                { id: 24, name: 'Chimol', price: 15, image: '🍅', category: 'extras' }
+            ]
+        };
+
+        const CATEGORIES = [
+            { id: 'baleadas', name: 'Baleadas', icon: '🌯' },
+            { id: 'pollos', name: 'Pollos', icon: '🍗' },
+            { id: 'bebidas', name: 'Bebidas', icon: '🥤' },
+            { id: 'extras', name: 'Extras', icon: '🍟' }
+        ];
+
+        const BILL_OPTIONS = [50, 100, 200, 500];
+
+        // ==================== ESTADO DE LA APLICACIÓN ====================
+        let state = {
+            screen: 'welcome', // welcome, menu, checkout, confirmation
+            activeCategory: 'baleadas',
+            cart: [],
+            customerName: '',
+            customerPhone: '',
+            selectedBill: null,
+            orderNumber: null
+        };
+
+        // ==================== FUNCIONES DE UTILIDAD ====================
+        function saveToLocalStorage() {
+            localStorage.setItem('somarTotemState', JSON.stringify(state));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('somarTotemState');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Solo cargar el carrito si existe
+                if (parsed.cart) {
+                    state.cart = parsed.cart;
+                }
+            }
+        }
+
+        function generateOrderNumber() {
+            return Math.floor(1000 + Math.random() * 9000);
+        }
+
+        function getCartTotal() {
+            return state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        }
+
+        function getCartItemCount() {
+            return state.cart.reduce((sum, item) => sum + item.quantity, 0);
+        }
+
+        function addToCart(product) {
+            const existingItem = state.cart.find(item => item.id === product.id);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                state.cart.push({ ...product, quantity: 1 });
+            }
+            saveToLocalStorage();
+            render();
+        }
+
+        function updateQuantity(productId, change) {
+            const item = state.cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    state.cart = state.cart.filter(i => i.id !== productId);
+                }
+                saveToLocalStorage();
+                render();
+            }
+        }
+
+        function resetApp() {
+            state = {
+                screen: 'welcome',
+                activeCategory: 'baleadas',
+                cart: [],
+                customerName: '',
+                customerPhone: '',
+                selectedBill: null,
+                orderNumber: null
+            };
+            saveToLocalStorage();
+            render();
+        }
+
+        // ==================== COMPONENTES DE LA INTERFAZ ====================
+        function WelcomeScreen() {
+            return `
+                <div class="welcome-bg h-screen flex flex-col items-center justify-center px-8 fade-in">
+                    <div class="text-center mb-12">
+                        <div class="bg-white rounded-3xl p-8 mb-8 inline-block shadow-2xl">
+                            <h1 class="text-7xl font-display font-bold text-blue-900">Somar</h1>
+                            <p class="text-2xl text-blue-700 font-semibold mt-2">TOTEM</p>
+                        </div>
+                        <h2 class="text-white text-4xl font-display font-bold mb-4">¡Bienvenido!</h2>
+                        <p class="text-white text-2xl font-medium opacity-90">Ordena tu comida favorita</p>
+                    </div>
+                    
+                    <button 
+                        onclick="startOrder()"
+                        class="btn-primary text-white text-3xl font-display font-bold py-8 px-16 rounded-3xl transform hover:scale-105">
+                        <div class="flex items-center gap-4">
+                            <span class="text-5xl">👆</span>
+                            <span>Toca para empezar tu pedido</span>
+                        </div>
+                    </button>
+
+                    <div class="mt-16 text-white text-center opacity-75">
+                        <p class="text-xl">🇭🇳 Hecho en Honduras con amor</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function MenuScreen() {
+            const cartCount = getCartItemCount();
+            const cartTotal = getCartTotal();
+            
+            return `
+                <div class="h-screen flex flex-col bg-gray-50">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-8 py-6 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h1 class="text-4xl font-display font-bold">Somar Totem</h1>
+                                <p class="text-blue-200 text-lg mt-1">Selecciona tus productos</p>
+                            </div>
+                            <button 
+                                onclick="viewCart()"
+                                class="bg-green-500 hover:bg-green-600 px-8 py-4 rounded-2xl font-bold text-xl relative shadow-lg transform hover:scale-105 transition">
+                                🛒 Ver Carrito
+                                ${cartCount > 0 ? `<span class="cart-badge absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold shadow-lg">${cartCount}</span>` : ''}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Categorías -->
+                    <div class="bg-white shadow-md px-8 py-6 overflow-x-auto">
+                        <div class="flex gap-4">
+                            ${CATEGORIES.map(cat => `
+                                <button 
+                                    onclick="changeCategory('${cat.id}')"
+                                    class="${state.activeCategory === cat.id ? 'tab-active' : 'tab-inactive'} px-8 py-4 rounded-2xl font-bold text-xl transition-all transform hover:scale-105 flex-shrink-0">
+                                    <span class="text-2xl mr-2">${cat.icon}</span>
+                                    ${cat.name}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Grid de Productos -->
+                    <div class="flex-1 overflow-y-auto px-8 py-6">
+                        <div class="grid grid-cols-3 gap-6">
+                            ${PRODUCTS[state.activeCategory].map(product => `
+                                <div class="product-card bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-gray-100 hover:border-green-500">
+                                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 flex items-center justify-center h-48">
+                                        <span class="text-8xl">${product.image}</span>
+                                    </div>
+                                    <div class="p-6">
+                                        <h3 class="font-display font-bold text-2xl text-gray-800 mb-2">${product.name}</h3>
+                                        <div class="flex items-center justify-between mt-4">
+                                            <p class="text-3xl font-bold text-green-600">L ${product.price}</p>
+                                            <button 
+                                                onclick='addToCart(${JSON.stringify(product)})'
+                                                class="btn-primary text-white px-6 py-3 rounded-xl font-bold text-xl">
+                                                + Agregar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Footer con Total -->
+                    ${cartCount > 0 ? `
+                        <div class="bg-white border-t-4 border-green-500 px-8 py-6 shadow-2xl">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-lg">Total de tu pedido:</p>
+                                    <p class="text-4xl font-display font-bold text-green-600">L ${cartTotal}</p>
+                                </div>
+                                <button 
+                                    onclick="viewCart()"
+                                    class="btn-primary text-white px-12 py-6 rounded-2xl font-display font-bold text-2xl">
+                                    Continuar →
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function CartScreen() {
+            const cartTotal = getCartTotal();
+            
+            if (state.cart.length === 0) {
+                return `
+                    <div class="h-screen flex flex-col items-center justify-center bg-gray-50">
+                        <div class="text-center">
+                            <p class="text-8xl mb-8">🛒</p>
+                            <h2 class="text-4xl font-display font-bold text-gray-700 mb-4">Tu carrito está vacío</h2>
+                            <button 
+                                onclick="backToMenu()"
+                                class="btn-primary text-white px-12 py-6 rounded-2xl font-bold text-2xl mt-8">
+                                ← Volver al Menú
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="h-screen flex flex-col bg-gray-50">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-8 py-6 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <button 
+                                onclick="backToMenu()"
+                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-6 py-3 rounded-xl font-bold text-lg transition">
+                                ← Volver
+                            </button>
+                            <h1 class="text-4xl font-display font-bold">Tu Pedido</h1>
+                            <div class="w-32"></div>
+                        </div>
+                    </div>
+
+                    <!-- Items del Carrito -->
+                    <div class="flex-1 overflow-y-auto px-8 py-6">
+                        <div class="space-y-4">
+                            ${state.cart.map(item => `
+                                <div class="bg-white rounded-2xl shadow-lg p-6 slide-in border-2 border-gray-100">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-6">
+                                            <span class="text-6xl">${item.image}</span>
+                                            <div>
+                                                <h3 class="font-display font-bold text-2xl text-gray-800">${item.name}</h3>
+                                                <p class="text-xl text-green-600 font-bold mt-1">L ${item.price} c/u</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4">
+                                            <button 
+                                                onclick="updateQuantity(${item.id}, -1)"
+                                                class="quantity-btn bg-red-500 hover:bg-red-600 text-white w-14 h-14 rounded-xl font-bold text-3xl flex items-center justify-center shadow-lg">
+                                                −
+                                            </button>
+                                            <span class="text-3xl font-bold text-gray-800 w-16 text-center">${item.quantity}</span>
+                                            <button 
+                                                onclick="updateQuantity(${item.id}, 1)"
+                                                class="quantity-btn bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-xl font-bold text-3xl flex items-center justify-center shadow-lg">
+                                                +
+                                            </button>
+                                            <p class="text-3xl font-bold text-gray-800 ml-4 w-32 text-right">L ${item.price * item.quantity}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Footer con Total y Checkout -->
+                    <div class="bg-white border-t-4 border-green-500 px-8 py-6 shadow-2xl">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <p class="text-gray-600 text-xl">Total a pagar:</p>
+                                <p class="text-5xl font-display font-bold text-green-600">L ${cartTotal}</p>
+                            </div>
+                            <button 
+                                onclick="proceedToCheckout()"
+                                class="btn-primary text-white px-16 py-8 rounded-2xl font-display font-bold text-3xl">
+                                Confirmar Pedido →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function CheckoutScreen() {
+            const cartTotal = getCartTotal();
+            
+            return `
+                <div class="h-screen flex flex-col bg-gray-50">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white px-8 py-6 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <button 
+                                onclick="backToCart()"
+                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-6 py-3 rounded-xl font-bold text-lg transition">
+                                ← Volver
+                            </button>
+                            <h1 class="text-4xl font-display font-bold">Finalizar Pedido</h1>
+                            <div class="w-32"></div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario -->
+                    <div class="flex-1 overflow-y-auto px-8 py-8">
+                        <div class="max-w-3xl mx-auto">
+                            <div class="bg-white rounded-3xl shadow-2xl p-10 slide-in">
+                                <h2 class="text-3xl font-display font-bold text-gray-800 mb-8">📋 Información del Cliente</h2>
+                                
+                                <div class="space-y-6">
+                                    <div>
+                                        <label class="block text-xl font-bold text-gray-700 mb-3">Nombre completo *</label>
+                                        <input 
+                                            type="text"
+                                            id="customerName"
+                                            value="${state.customerName}"
+                                            onchange="updateCustomerName(this.value)"
+                                            placeholder="Ej: Juan Pérez"
+                                            class="w-full px-6 py-5 border-4 border-gray-300 rounded-2xl text-2xl font-medium focus:border-green-500 transition"
+                                            required>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xl font-bold text-gray-700 mb-3">Número de celular *</label>
+                                        <input 
+                                            type="tel"
+                                            id="customerPhone"
+                                            value="${state.customerPhone}"
+                                            onchange="updateCustomerPhone(this.value)"
+                                            placeholder="Ej: 9999-9999"
+                                            class="w-full px-6 py-5 border-4 border-gray-300 rounded-2xl text-2xl font-medium focus:border-green-500 transition"
+                                            required>
+                                    </div>
+
+                                    <div class="border-t-4 border-gray-200 pt-6 mt-6">
+                                        <label class="block text-xl font-bold text-gray-700 mb-4">💰 ¿Con cuánto pagarás en caja?</label>
+                                        <p class="text-gray-600 mb-4">Selecciona el billete para agilizar tu cambio:</p>
+                                        <div class="grid grid-cols-4 gap-4">
+                                            ${BILL_OPTIONS.map(amount => `
+                                                <button 
+                                                    onclick="selectBill(${amount})"
+                                                    class="bill-option ${state.selectedBill === amount ? 'bill-selected' : 'bg-gray-100 hover:bg-gray-200 border-4 border-gray-300'} py-6 rounded-2xl font-bold text-2xl">
+                                                    L ${amount}
+                                                </button>
+                                            `).join('')}
+                                        </div>
+                                        ${state.selectedBill && state.selectedBill < cartTotal ? `
+                                            <p class="text-red-600 font-bold text-lg mt-4">⚠️ El monto seleccionado es menor al total. Selecciona un billete mayor.</p>
+                                        ` : ''}
+                                        ${state.selectedBill && state.selectedBill >= cartTotal ? `
+                                            <p class="text-green-600 font-bold text-lg mt-4">✓ Cambio: L ${state.selectedBill - cartTotal}</p>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-white border-t-4 border-green-500 px-8 py-6 shadow-2xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-xl">Total a pagar:</p>
+                                <p class="text-5xl font-display font-bold text-green-600">L ${cartTotal}</p>
+                            </div>
+                            <button 
+                                onclick="confirmOrder()"
+                                ${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'disabled' : ''}
+                                class="${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'btn-primary'} text-white px-16 py-8 rounded-2xl font-display font-bold text-3xl">
+                                ✓ Confirmar Pedido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function ConfirmationScreen() {
+            const cartTotal = getCartTotal();
+            const change = state.selectedBill - cartTotal;
+            
+            return `
+                <div class="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-500 to-green-600 px-8 fade-in">
+                    <div class="bg-white rounded-3xl shadow-2xl p-12 max-w-2xl text-center">
+                        <div class="text-8xl mb-6">✅</div>
+                        <h1 class="text-5xl font-display font-bold text-gray-800 mb-4">¡Pedido Confirmado!</h1>
+                        <p class="text-2xl text-gray-600 mb-8">Gracias por tu orden, ${state.customerName}</p>
+                        
+                        <div class="bg-blue-50 rounded-2xl p-8 mb-8 border-4 border-blue-200">
+                            <p class="text-gray-600 text-xl mb-2">Tu número de orden es:</p>
+                            <p class="text-7xl font-display font-bold text-blue-900">#{state.orderNumber}</p>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-2xl p-6 mb-8">
+                            <div class="flex justify-between items-center mb-3">
+                                <p class="text-xl text-gray-600">Total:</p>
+                                <p class="text-3xl font-bold text-gray-800">L ${cartTotal}</p>
+                            </div>
+                            <div class="flex justify-between items-center mb-3">
+                                <p class="text-xl text-gray-600">Pagarás con:</p>
+                                <p class="text-3xl font-bold text-blue-600">L ${state.selectedBill}</p>
+                            </div>
+                            <div class="border-t-2 border-gray-300 pt-3 mt-3">
+                                <div class="flex justify-between items-center">
+                                    <p class="text-xl font-bold text-gray-700">Tu cambio:</p>
+                                    <p class="text-4xl font-bold text-green-600">L ${change}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-4 border-yellow-300 rounded-2xl p-6 mb-8">
+                            <p class="text-2xl font-bold text-yellow-800 mb-2">📍 Siguiente paso:</p>
+                            <p class="text-xl text-yellow-700">Pasa a caja a pagar tu orden</p>
+                        </div>
+
+                        <button 
+                            onclick="resetApp()"
+                            class="btn-secondary text-white px-12 py-6 rounded-2xl font-display font-bold text-2xl">
+                            ← Volver al Inicio
+                        </button>
+                    </div>
+
+                    <p class="text-white text-xl mt-8 opacity-75">Gracias por usar Somar Totem 🇭🇳</p>
+                </div>
+            `;
+        }
+
+        // ==================== FUNCIONES DE NAVEGACIÓN ====================
+        function startOrder() {
+            state.screen = 'menu';
+            render();
+        }
+
+        function changeCategory(category) {
+            state.activeCategory = category;
+            render();
+        }
+
+        function viewCart() {
+            state.screen = 'cart';
+            render();
+        }
+
+        function backToMenu() {
+            state.screen = 'menu';
+            render();
+        }
+
+        function backToCart() {
+            state.screen = 'cart';
+            render();
+        }
+
+        function proceedToCheckout() {
+            state.screen = 'checkout';
+            render();
+        }
+
+        function updateCustomerName(value) {
+            state.customerName = value;
+            saveToLocalStorage();
+        }
+
+        function updateCustomerPhone(value) {
+            state.customerPhone = value;
+            saveToLocalStorage();
+        }
+
+        function selectBill(amount) {
+            state.selectedBill = amount;
+            saveToLocalStorage();
+            render();
+        }
+
+        function confirmOrder() {
+            if (!state.customerName || !state.customerPhone || !state.selectedBill) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            if (state.selectedBill < getCartTotal()) {
+                alert('El monto seleccionado es insuficiente');
+                return;
+            }
+
+            state.orderNumber = generateOrderNumber();
+            state.screen = 'confirmation';
+            
+            // Guardar orden en localStorage (simulación de base de datos)
+            const orders = JSON.parse(localStorage.getItem('somarOrders') || '[]');
+            orders.push({
+                orderNumber: state.orderNumber,
+                customerName: state.customerName,
+                customerPhone: state.customerPhone,
+                cart: state.cart,
+                total: getCartTotal(),
+                billAmount: state.selectedBill,
+                change: state.selectedBill - getCartTotal(),
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('somarOrders', JSON.stringify(orders));
+            
+            saveToLocalStorage();
+            render();
+        }
+
+        // ==================== RENDERIZADO ====================
+        function render() {
+            const app = document.getElementById('app');
+            
+            switch(state.screen) {
+                case 'welcome':
+                    app.innerHTML = WelcomeScreen();
+                    break;
+                case 'menu':
+                    app.innerHTML = MenuScreen();
+                    break;
+                case 'cart':
+                    app.innerHTML = CartScreen();
+                    break;
+                case 'checkout':
+                    app.innerHTML = CheckoutScreen();
+                    break;
+                case 'confirmation':
+                    app.innerHTML = ConfirmationScreen();
+                    break;
+            }
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            render();
+        });
+
+        // Prevenir zoom accidental
+        document.addEventListener('touchmove', function(event) {
+            if (event.scale !== 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevenir doble tap zoom
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
