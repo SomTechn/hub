@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="screen-orientation" content="landscape">
@@ -238,8 +238,8 @@
     <script>
         // ==================== CONFIGURACIÓN ====================
         const CONFIG = {
-            SUPABASE_URL: 'https://osmghhkskiqrzxnbnsyf.supabase.co',  // Reemplazar
-            SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zbWdoaGtza2lxcnp4bmJuc3lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMjM0MTgsImV4cCI6MjA4NDY5OTQxOH0.6Ikhw3xTiAs2lAKy_7WpeZLPJ4V0az_FZ7ETWUrKEjo',  // Reemplazar
+            SUPABASE_URL: 'TU_SUPABASE_URL_AQUI',  // Reemplazar
+            SUPABASE_ANON_KEY: 'TU_SUPABASE_ANON_KEY_AQUI',  // Reemplazar
             BUSINESS_SLUG: 'demo-restaurant',  // Slug fijo del negocio
             BILL_OPTIONS: [50, 100, 200, 500]
         };
@@ -688,99 +688,108 @@
             const business = state.business;
             
             return `
-                <div class="h-screen flex flex-col bg-gray-50">
-                    <!-- Header -->
-                    <div class="text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 shadow-xl" style="background: linear-gradient(135deg, ${business.primary_color} 0%, ${business.primary_color}dd 100%)">
+                <div class="min-h-screen flex flex-col bg-gray-50">
+                    <!-- Header compacto -->
+                    <div class="text-white px-3 py-2 shadow-xl" style="background: linear-gradient(135deg, ${business.primary_color} 0%, ${business.primary_color}dd 100%)">
                         <div class="flex items-center justify-between">
                             <button 
                                 onclick="backToCart()"
-                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold text-base sm:text-lg transition">
+                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-2 rounded-lg font-bold text-sm">
                                 ← Volver
                             </button>
-                            <h1 class="text-xl sm:text-2xl lg:text-3xl font-display font-bold">Finalizar Pedido</h1>
-                            <div class="w-16 sm:w-24 lg:w-32"></div>
+                            <h1 class="text-lg font-display font-bold">Finalizar Pedido</h1>
+                            <div class="w-16"></div>
                         </div>
                     </div>
 
-                    <!-- Formulario -->
-                    <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-                        <div class="max-w-6xl mx-auto">
-                            <div class="bg-white rounded-2xl lg:rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-8">
-                                <h2 class="text-xl sm:text-2xl font-display font-bold text-gray-800 mb-4 sm:mb-6 text-center">📋 Información del Cliente</h2>
+                    <!-- Formulario compacto con scroll -->
+                    <div class="flex-1 overflow-y-auto px-3 py-3">
+                        <div class="max-w-4xl mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg p-3">
                                 
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-4 sm:mb-6">
-                                    <!-- Datos del Cliente -->
-                                    <div class="space-y-4 sm:space-y-5">
-                                        <div>
-                                            <label class="block text-base sm:text-lg font-bold text-gray-700 mb-2">Nombre completo *</label>
-                                            <input 
-                                                type="text"
-                                                id="customerName"
-                                                value="${state.customerName}"
-                                                oninput="state.customerName = this.value; render()"
-                                                placeholder="Ej: Juan Pérez"
-                                                class="w-full px-4 sm:px-5 py-3 sm:py-4 border-3 sm:border-4 border-gray-300 rounded-xl lg:rounded-2xl text-lg sm:text-xl font-medium focus:border-green-500 transition"
-                                                required>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-base sm:text-lg font-bold text-gray-700 mb-2">Número de celular *</label>
-                                            <input 
-                                                type="tel"
-                                                id="customerPhone"
-                                                value="${state.customerPhone}"
-                                                oninput="state.customerPhone = this.value; render()"
-                                                placeholder="Ej: 9999-9999"
-                                                class="w-full px-4 sm:px-5 py-3 sm:py-4 border-3 sm:border-4 border-gray-300 rounded-xl lg:rounded-2xl text-lg sm:text-xl font-medium focus:border-green-500 transition"
-                                                required>
-                                        </div>
+                                <!-- Datos del Cliente -->
+                                <div class="space-y-3 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1">Nombre completo *</label>
+                                        <input 
+                                            type="text"
+                                            id="customerName"
+                                            value="${state.customerName}"
+                                            placeholder="Ej: Juan Pérez"
+                                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-base focus:border-green-500 transition"
+                                            required>
                                     </div>
 
-                                    <!-- Selección de Billete -->
                                     <div>
-                                        <label class="block text-base sm:text-lg font-bold text-gray-700 mb-2">💰 ¿Con cuánto pagarás en caja?</label>
-                                        <p class="text-gray-600 mb-3 sm:mb-4 text-xs sm:text-sm">Selecciona el billete para agilizar tu cambio:</p>
-                                        <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
-                                            ${CONFIG.BILL_OPTIONS.map(amount => `
-                                                <button 
-                                                    onclick="selectBill(${amount})"
-                                                    class="bill-option ${state.selectedBill === amount ? 'bill-selected' : 'bg-gray-100 hover:bg-gray-200 border-3 sm:border-4 border-gray-300'} py-4 sm:py-5 rounded-xl lg:rounded-2xl font-bold text-xl sm:text-2xl">
-                                                    L ${amount}
-                                                </button>
-                                            `).join('')}
-                                        </div>
-                                        ${state.selectedBill && state.selectedBill < cartTotal ? `
-                                            <p class="text-red-600 font-bold text-sm sm:text-base">⚠️ El monto es menor al total. Selecciona un billete mayor.</p>
-                                        ` : ''}
-                                        ${state.selectedBill && state.selectedBill >= cartTotal ? `
-                                            <div class="bg-green-50 border-2 border-green-300 rounded-xl p-3 sm:p-4">
-                                                <p class="text-green-700 font-bold text-base sm:text-lg">✓ Cambio: <span class="text-xl sm:text-2xl">L ${(state.selectedBill - cartTotal).toFixed(2)}</span></p>
-                                            </div>
-                                        ` : ''}
+                                        <label class="block text-sm font-bold text-gray-700 mb-1">Número de celular *</label>
+                                        <input 
+                                            type="tel"
+                                            id="customerPhone"
+                                            value="${state.customerPhone}"
+                                            placeholder="Ej: 9999-9999"
+                                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-base focus:border-green-500 transition"
+                                            required>
                                     </div>
                                 </div>
 
+                                <!-- Selección de Billete -->
+                                <div class="border-t pt-3">
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">💰 ¿Con cuánto pagarás?</label>
+                                    <div class="grid grid-cols-2 gap-2 mb-3">
+                                        ${CONFIG.BILL_OPTIONS.map(amount => `
+                                            <button 
+                                                type="button"
+                                                onclick="selectBill(${amount})"
+                                                class="bill-option ${state.selectedBill === amount ? 'bill-selected' : 'bg-gray-100 hover:bg-gray-200 border-2 border-gray-300'} py-3 rounded-lg font-bold text-lg">
+                                                L ${amount}
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                    
+                                    <!-- Input para monto manual -->
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">O ingresa otro monto:</label>
+                                        <input 
+                                            type="number"
+                                            id="customBillAmount"
+                                            placeholder="Ej: 150"
+                                            min="${cartTotal}"
+                                            step="1"
+                                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-base focus:border-green-500"
+                                            onchange="selectCustomBill(this.value)">
+                                    </div>
+                                    
+                                    ${state.selectedBill && state.selectedBill < cartTotal ? `
+                                        <p class="text-red-600 font-bold text-sm">⚠️ El monto es menor al total</p>
+                                    ` : ''}
+                                    ${state.selectedBill && state.selectedBill >= cartTotal ? `
+                                        <div class="bg-green-50 border-2 border-green-300 rounded-lg p-2">
+                                            <p class="text-green-700 font-bold text-sm">✓ Cambio: <span class="text-lg">L ${(state.selectedBill - cartTotal).toFixed(2)}</span></p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+
                                 ${business.points_enabled ? `
-                                    <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 text-center">
-                                        <p class="text-blue-800 font-bold text-lg">🎁 Ganarás ${Math.floor(cartTotal / business.points_ratio)} puntos con esta compra!</p>
+                                    <div class="bg-blue-50 border border-blue-300 rounded-lg p-2 text-center mt-3">
+                                        <p class="text-blue-800 font-bold text-sm">🎁 Ganarás ${Math.floor(cartTotal / business.points_ratio)} puntos</p>
                                     </div>
                                 ` : ''}
                             </div>
                         </div>
                     </div>
 
-                    <!-- Footer -->
-                    <div class="bg-white border-t-3 sm:border-t-4 border-green-500 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 shadow-2xl">
-                        <div class="flex flex-col sm:flex-row items-center justify-between max-w-6xl mx-auto gap-3 sm:gap-0">
-                            <div class="text-center sm:text-left">
-                                <p class="text-gray-600 text-base sm:text-lg">Total a pagar:</p>
-                                <p class="text-3xl sm:text-4xl font-display font-bold text-green-600">L ${cartTotal.toFixed(2)}</p>
+                    <!-- Footer compacto -->
+                    <div class="bg-white border-t-2 border-green-500 px-3 py-3 shadow-xl">
+                        <div class="flex items-center justify-between max-w-4xl mx-auto gap-2">
+                            <div class="text-left">
+                                <p class="text-gray-600 text-xs">Total:</p>
+                                <p class="text-2xl font-display font-bold text-green-600">L ${cartTotal.toFixed(2)}</p>
                             </div>
                             <button 
                                 onclick="confirmOrder()"
                                 ${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'disabled' : ''}
-                                class="${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'btn-primary'} text-white px-10 sm:px-12 lg:px-16 py-5 sm:py-6 rounded-xl lg:rounded-2xl font-display font-bold text-xl sm:text-2xl w-full sm:w-auto">
-                                ✓ Confirmar Pedido
+                                class="${!state.customerName || !state.customerPhone || !state.selectedBill || state.selectedBill < cartTotal ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'btn-primary'} text-white px-6 py-3 rounded-xl font-display font-bold text-base">
+                                ✓ Confirmar
                             </button>
                         </div>
                     </div>
@@ -893,10 +902,28 @@
 
         function selectBill(amount) {
             state.selectedBill = amount;
+            // Limpiar input de monto personalizado
+            const customInput = document.getElementById('customBillAmount');
+            if (customInput) customInput.value = '';
             render();
         }
 
+        function selectCustomBill(amount) {
+            const numAmount = parseFloat(amount);
+            if (numAmount && numAmount > 0) {
+                state.selectedBill = numAmount;
+                render();
+            }
+        }
+
         async function confirmOrder() {
+            // Capturar valores actuales de los inputs
+            const nameInput = document.getElementById('customerName');
+            const phoneInput = document.getElementById('customerPhone');
+            
+            if (nameInput) state.customerName = nameInput.value;
+            if (phoneInput) state.customerPhone = phoneInput.value;
+            
             if (!state.customerName || !state.customerPhone || !state.selectedBill) {
                 alert('Por favor completa todos los campos');
                 return;
