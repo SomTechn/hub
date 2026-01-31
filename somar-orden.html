@@ -30,6 +30,9 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .order-card { transition: all 0.2s; cursor: pointer; }
         .order-card:active { transform: scale(0.98); }
+        .service-card { transition: all 0.3s ease; }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .service-card:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -388,50 +391,87 @@
                     </div>
 
                     <div class="flex-1 overflow-y-auto scrollable px-4 py-6">
-                        <div class="max-w-2xl mx-auto">
-                            <form id="newOrderForm" class="bg-white rounded-xl shadow-lg p-6 space-y-4">
+                        <div class="max-w-4xl mx-auto">
+                            <form id="newOrderForm" class="space-y-6">
+                                <!-- Catálogo de Servicios -->
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Tipo de Servicio *</label>
-                                    <select 
-                                        id="serviceSelect"
-                                        required
-                                        onchange="updateServiceInfo()"
-                                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
-                                        <option value="">Seleccionar...</option>
-                                        ${state.services.map(s => `<option value="${s.id}" data-price="${s.price}" data-hours="${s.estimated_hours}">${s.name} - L ${parseFloat(s.price).toFixed(2)}</option>`).join('')}
-                                    </select>
+                                    <h2 class="text-xl font-bold text-gray-800 mb-4">Selecciona un Servicio</h2>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="servicesGrid">
+                                        ${state.services.map((s, idx) => `
+                                            <div 
+                                                onclick="selectService('${s.id}', ${s.price}, ${s.estimated_hours}, '${s.name}')"
+                                                class="service-card bg-white rounded-xl shadow-lg p-5 cursor-pointer border-2 border-gray-200 hover:border-blue-500 transition-all"
+                                                id="service-${s.id}">
+                                                <div class="text-center mb-3">
+                                                    <div class="text-4xl mb-2">${['🔧', '📱', '👔', '⚡', '🚗', '💻', '🔨', '✂️'][idx % 8]}</div>
+                                                    <h3 class="font-bold text-lg text-gray-800">${s.name}</h3>
+                                                </div>
+                                                
+                                                <div class="space-y-2 text-sm">
+                                                    <div class="flex justify-between items-center py-2 border-t border-gray-200">
+                                                        <span class="text-gray-600">⏱️ Tiempo:</span>
+                                                        <span class="font-bold text-blue-900">${s.estimated_hours}h</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-t border-gray-200">
+                                                        <span class="text-gray-600">💰 Precio:</span>
+                                                        <span class="font-bold text-green-600 text-lg">L ${parseFloat(s.price).toFixed(2)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
                                 </div>
 
-                                <div id="serviceInfo" class="hidden bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-                                    <div class="grid grid-cols-2 gap-4 text-sm">
+                                <!-- Información del Servicio Seleccionado -->
+                                <div id="selectedServiceInfo" class="hidden bg-blue-50 border-2 border-blue-500 rounded-xl p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-lg font-bold text-blue-900">✓ Servicio Seleccionado</h3>
+                                        <button type="button" onclick="clearServiceSelection()" class="text-sm text-blue-600 hover:text-blue-800">Cambiar</button>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <p class="text-gray-600">Tiempo Estimado:</p>
-                                            <p class="font-bold text-blue-900" id="estimatedTime"></p>
+                                            <p class="text-sm text-gray-600">Servicio:</p>
+                                            <p class="font-bold text-gray-900" id="selectedServiceName">-</p>
                                         </div>
                                         <div>
-                                            <p class="text-gray-600">Entrega Aprox:</p>
-                                            <p class="font-bold text-blue-900" id="estimatedDelivery"></p>
+                                            <p class="text-sm text-gray-600">Precio:</p>
+                                            <p class="font-bold text-green-600 text-xl" id="selectedServicePrice">L 0.00</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">Tiempo Estimado:</p>
+                                            <p class="font-bold text-blue-900" id="selectedServiceTime">-</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">Entrega Aprox:</p>
+                                            <p class="font-bold text-blue-900 text-sm" id="selectedServiceDelivery">-</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div>
+                                <!-- Notas -->
+                                <div class="bg-white rounded-xl shadow-lg p-6">
                                     <label class="block text-sm font-bold text-gray-700 mb-2">Detalles / Notas (Opcional)</label>
                                     <textarea 
                                         id="orderNotes"
                                         rows="4"
-                                        placeholder="Describe los detalles de tu trabajo..."
+                                        placeholder="Describe los detalles específicos de tu trabajo..."
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"></textarea>
                                 </div>
 
-                                <div class="bg-green-50 border-2 border-green-300 rounded-lg p-4">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-700 font-bold">Total a Pagar:</span>
-                                        <span class="text-2xl font-bold text-green-600" id="orderPrice">L 0.00</span>
+                                <!-- Resumen y Botón -->
+                                <div class="bg-white rounded-xl shadow-lg p-6">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-xl font-bold text-gray-700">Total a Pagar:</span>
+                                        <span class="text-3xl font-bold text-green-600" id="orderTotalPrice">L 0.00</span>
                                     </div>
+                                    <button 
+                                        type="submit" 
+                                        id="submitOrderBtn"
+                                        disabled
+                                        class="w-full py-4 rounded-xl font-bold text-lg bg-gray-300 text-gray-500 cursor-not-allowed">
+                                        Selecciona un servicio
+                                    </button>
                                 </div>
-
-                                <button type="submit" class="btn-primary text-white w-full py-4 rounded-xl font-bold text-lg">✅ Crear Orden</button>
                             </form>
                         </div>
                     </div>
@@ -569,6 +609,62 @@
             document.body.insertAdjacentHTML('beforeend', modal);
         }
 
+        let selectedServiceData = null;
+
+        function selectService(serviceId, price, hours, name) {
+            // Limpiar selección anterior
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('border-blue-500', 'bg-blue-50');
+                card.classList.add('border-gray-200', 'bg-white');
+            });
+
+            // Marcar como seleccionado
+            const card = document.getElementById('service-' + serviceId);
+            card.classList.remove('border-gray-200', 'bg-white');
+            card.classList.add('border-blue-500', 'bg-blue-50');
+
+            // Guardar datos
+            selectedServiceData = { id: serviceId, price: price, hours: hours, name: name };
+
+            // Calcular entrega
+            const delivery = new Date();
+            delivery.setHours(delivery.getHours() + hours);
+
+            // Mostrar información
+            document.getElementById('selectedServiceInfo').classList.remove('hidden');
+            document.getElementById('selectedServiceName').textContent = name;
+            document.getElementById('selectedServicePrice').textContent = 'L ' + parseFloat(price).toFixed(2);
+            document.getElementById('selectedServiceTime').textContent = hours + ' horas';
+            document.getElementById('selectedServiceDelivery').textContent = formatDateTime(delivery.toISOString());
+            document.getElementById('orderTotalPrice').textContent = 'L ' + parseFloat(price).toFixed(2);
+
+            // Habilitar botón
+            const btn = document.getElementById('submitOrderBtn');
+            btn.disabled = false;
+            btn.className = 'btn-primary text-white w-full py-4 rounded-xl font-bold text-lg';
+            btn.textContent = '✅ Crear Orden';
+        }
+
+        function clearServiceSelection() {
+            selectedServiceData = null;
+            
+            // Limpiar todas las cards
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('border-blue-500', 'bg-blue-50');
+                card.classList.add('border-gray-200', 'bg-white');
+            });
+
+            // Ocultar información
+            document.getElementById('selectedServiceInfo').classList.add('hidden');
+            document.getElementById('orderTotalPrice').textContent = 'L 0.00';
+
+            // Deshabilitar botón
+            const btn = document.getElementById('submitOrderBtn');
+            btn.disabled = true;
+            btn.className = 'w-full py-4 rounded-xl font-bold text-lg bg-gray-300 text-gray-500 cursor-not-allowed';
+            btn.textContent = 'Selecciona un servicio';
+        }
+
         function closeModal(event) {
             if (event && event.target === event.currentTarget) {
                 event.target.remove();
@@ -605,23 +701,22 @@
         async function handleNewOrder(e) {
             e.preventDefault();
             
-            const serviceId = document.getElementById('serviceSelect').value;
-            const notes = document.getElementById('orderNotes').value;
-            const service = state.services.find(s => s.id === serviceId);
-            
-            if (!serviceId) {
+            if (!selectedServiceData) {
                 alert('Selecciona un servicio');
                 return;
             }
 
+            const notes = document.getElementById('orderNotes').value;
+
             try {
                 const order = await createOrder({
-                    service_id: serviceId,
-                    price: service.price,
+                    service_id: selectedServiceData.id,
+                    price: selectedServiceData.price,
                     notes: notes
                 });
                 
                 alert('✅ Orden ' + order.order_number + ' creada exitosamente');
+                selectedServiceData = null;
                 backToMenu();
             } catch (error) {
                 alert('Error al crear la orden');
